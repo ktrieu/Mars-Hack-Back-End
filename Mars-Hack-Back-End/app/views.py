@@ -73,7 +73,7 @@ def create_order(request):
         return HttpResponseBadRequest(content='Invalid request method.')
     try:
         product = Product.objects.get(id=order_json['product_id'])
-        user = User.objects.get(id=order_json['user_id'])
+        user = User.objects.get(customer_id=order_json['user_id'])
     except KeyError:
         return HttpResponseBadRequest('No product or user id.')
     except ObjectDoesNotExist:
