@@ -54,3 +54,16 @@ class OrderIndividual(models.Model):
     can_deliver = models.BooleanField()
 
 admin.site.register(OrderIndividual)
+
+class OrderCombinedUser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey('OrderCombined', on_delete=models.CASCADE)
+    payment = models.DecimalField(max_digits=4, decimal_places=2)
+    
+    is_deliverer = models.BooleanField()
+
+class OrderCombined(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    users = models.ManyToManyField(User, through=OrderCombinedUser)
+
+
