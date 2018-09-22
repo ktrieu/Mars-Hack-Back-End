@@ -36,8 +36,17 @@ def make_td_request(endpoint, params=None):
     response = requests.get(url, headers = { 'Authorization': API_KEY }, params=params)
     return response.json()
 
+#returns a user by TD id or by database pk
+def get_user_by_id(id):
+    #first try to retrieve by pk
+    try:
+        user = User.objects.get(pk=id)
+    except ObjectDoesNotExist:
+        user = User.objects.get(customer_id=id)
+    return user
+
 def home(request):
-    return HttpResponse(r'<h1>HAIL SATAN</h1>')
+    return HttpResponse(r'<h1>SNAP BACK TO REALITY OH THERE GOES GRAVITY</h1>')
 
 @csrf_exempt
 def load_user_from_api(request, **kwargs):
@@ -65,15 +74,7 @@ def load_user_from_api(request, **kwargs):
 
 @csrf_exempt
 def get_user(request, **kwargs):
-    id = kwargs['cust_id']
-    #first try to retrieve by pk
-    try:
-        user = User.objects.get(pk=id)
-    except ObjectDoesNotExist:
-        try:
-            user = User.objects.get(customer_id=id)
-        except ObjectDoesNotExist:
-            return HttpResponseBadRequest('User not found.')
+    user = get_user_by_id(kwargs['cust_id'])
     return HttpResponse(serializers.serialize('json', [user]), content_type='application/json')
 
 @csrf_exempt
@@ -124,6 +125,11 @@ def get_order(request, **kwargs):
 @csrf_exempt
 def get_orders(request):
     return HttpResponse(serializers.serialize('json', OrderIndividual.objects.all()), content_type='application/json')
+
+@csrf_exempt
+def cust_orders(request, **kwargs):
+    user = get_user_by_id(kwargs['cust_id'])
+    return HttpResponse(serializers.serialize('json', user.orderindividual_set.all()), content_type='application/json')
 
 @csrf_exempt
 def demo_create_random_order(request):
