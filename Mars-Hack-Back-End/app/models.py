@@ -33,6 +33,6 @@ class Product(models.Model):
     description = models.TextField()
 
     def __str__(self):
-        return name
+        return self.name
 
 admin.site.register(Product)
