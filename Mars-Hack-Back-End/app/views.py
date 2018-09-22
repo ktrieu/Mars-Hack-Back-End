@@ -114,3 +114,7 @@ def get_order(request, **kwargs):
         return HttpResponseBadRequest('Order not found.')
     order_json = serializers.serialize('json', [order])
     return HttpResponse(order_json, content_type='application/json')
+
+@csrf_exempt
+def get_orders(request):
+    return HttpResponse(serializers.serialize('json', OrderIndividual.objects.all()), content_type='application/json')

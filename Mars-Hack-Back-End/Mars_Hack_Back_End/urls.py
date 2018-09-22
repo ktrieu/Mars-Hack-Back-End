@@ -20,5 +20,6 @@ urlpatterns = [
     path(r'api/get_user/<cust_id>', app.views.get_user),
     path(r'api/get_products', app.views.get_products),
     path(r'api/create_order', app.views.create_order),
-    path(r'api/get_order/<order_id>', app.views.get_order)
+    path(r'api/get_order/<order_id>', app.views.get_order),
+    path(r'api/get_orders/', app.views.get_orders)
 ]
