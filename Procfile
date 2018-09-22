@@ -1,0 +1,1 @@
+﻿﻿web: gunicorn --pythonpath Mars_Hack_Back_End Mars_Hack_Back_End.wsgi
