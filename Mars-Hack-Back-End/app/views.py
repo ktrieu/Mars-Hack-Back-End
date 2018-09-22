@@ -104,3 +104,13 @@ def create_order(request):
         can_deliver=order_json['can_deliver'])
     order.save()
     return HttpResponse()
+
+@csrf_exempt
+def get_order(request, **kwargs):
+    id = kwargs['order_id']
+    try:
+        order = OrderIndividual.objects.get(pk=id)
+    except:
+        return HttpResponseBadRequest('Order not found.')
+    order_json = serializers.serialize('json', [order])
+    return HttpResponse(order_json, content_type='application/json')
