@@ -36,3 +36,17 @@ class Product(models.Model):
         return self.name
 
 admin.site.register(Product)
+
+class OrderIndividual(models.Model):
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    percentage = models.IntegerField()
+
+    delivery_begin = models.DateField()
+    delivery_end = models.DateField()
+
+    can_deliver = models.BooleanField()
+
+admin.site.register(OrderIndividual)
