@@ -66,10 +66,14 @@ def load_user_from_api(request, **kwargs):
 @csrf_exempt
 def get_user(request, **kwargs):
     id = kwargs['cust_id']
+    #first try to retrieve by pk
     try:
         user = User.objects.get(pk=id)
     except ObjectDoesNotExist:
-        return HttpResponseBadRequest('User not found.')
+        try:
+            user = User.objects.get(customer_id=id)
+        except ObjectDoesNotExist:
+            return HttpResponseBadRequest('User not found.')
     return HttpResponse(serializers.serialize('json', [user]), content_type='application/json')
 
 @csrf_exempt
