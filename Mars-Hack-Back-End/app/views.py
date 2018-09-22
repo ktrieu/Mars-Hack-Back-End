@@ -65,7 +65,7 @@ def load_user_from_api(request, **kwargs):
 def get_user(request, **kwargs):
     id = kwargs['cust_id']
     try:
-        user = User.objects.get(customer_id=id)
+        user = User.objects.get(pk=id)
     except ObjectDoesNotExist:
         return HttpResponseBadRequest('User not found.')
     return HttpResponse(serializers.serialize('json', [user]), content_type='application/json')
