@@ -5,6 +5,7 @@ Definition of views.
 import requests
 
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -26,7 +27,10 @@ def make_td_request(endpoint, params=None):
 def home(request):
     return HttpResponse(r'<h1>HAIL SATAN</h1>')
 
+@csrf_exempt
 def load_user_from_api(request, **kwargs):
+    if request.method != 'POST':
+        return HttpResponseBadRequest(content='Invalid request method.')
     cust_id = kwargs['cust_id']
     endpoint = f'customers/{cust_id}'
     response = make_td_request(endpoint)
