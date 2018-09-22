@@ -4,7 +4,9 @@ Definition of views.
 
 import requests
 import datetime
+from datetime import date, timedelta
 import json
+import random
 
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -118,3 +120,24 @@ def get_order(request, **kwargs):
 @csrf_exempt
 def get_orders(request):
     return HttpResponse(serializers.serialize('json', OrderIndividual.objects.all()), content_type='application/json')
+
+@csrf_exempt
+def demo_create_random_order(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Incorrect request method.')
+    user = User.objects.order_by('?')[0]
+    product = Product.objects.order_by('?')[0]
+    percentage = random.choice([25, 50, 75])
+    start_date = date.today()
+    start_date += timedelta(days=random.randint(-2, 2))
+    end_date = date.today() + timedelta(days=7)
+    end_date += timedelta(days=random.randint(-2, 2))
+    order = OrderIndividual()
+    order.user = user
+    order.product = product
+    order.percentage = percentage
+    order.delivery_begin = start_date
+    order.delivery_end = end_date
+    order.can_deliver = random.choice([True, False])
+    order.save()
+    return HttpResponse(order.pk)
