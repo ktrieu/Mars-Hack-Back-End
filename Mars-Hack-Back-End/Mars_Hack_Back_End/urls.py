@@ -3,7 +3,7 @@ Definition of urls for Mars_Hack_Back_End.
 """
 
 from datetime import datetime
-from django.conf.urls import url
+from django.urls import path
 import django.contrib.auth.views
 
 import app.forms
@@ -14,6 +14,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^', app.views.home),
-    url(r'^admin/', admin.site.urls),
+    path(r'', app.views.home),
+    path(r'admin', admin.site.urls),
 ]
