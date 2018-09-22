@@ -103,7 +103,7 @@ def create_order(request):
         delivery_end=end_date,
         can_deliver=order_json['can_deliver'])
     order.save()
-    return HttpResponse()
+    return HttpResponse(order.pk)
 
 @csrf_exempt
 def get_order(request, **kwargs):
