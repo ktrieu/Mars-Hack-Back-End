@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
 from django.utils.datastructures import MultiValueDictKeyError
+from django.forms.models import model_to_dict
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -59,6 +60,15 @@ def load_user_from_api(request, **kwargs):
     except IntegrityError as e:
         return HttpResponseBadRequest(content='Error: customer already present in database.')
     return HttpResponse()
+
+@csrf_exempt
+def get_user(request, **kwargs):
+    id = kwargs['cust_id']
+    try:
+        user = User.objects.get(customer_id=id)
+    except ObjectDoesNotExist:
+        return HttpResponseBadRequest('User not found.')
+    return JsonResponse(model_to_dict(user))
 
 @csrf_exempt
 def get_products(request):

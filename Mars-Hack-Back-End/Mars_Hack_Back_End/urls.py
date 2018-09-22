@@ -17,6 +17,7 @@ urlpatterns = [
     path(r'', app.views.home),
     path(r'admin', admin.site.urls),
     path(r'api/load_user/<cust_id>', app.views.load_user_from_api),
+    path(r'api/get_user/<cust_id>', app.views.get_user),
     path(r'api/get_products', app.views.get_products),
     path(r'api/create_order', app.views.create_order)
 ]
