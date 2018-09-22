@@ -68,7 +68,7 @@ def get_user(request, **kwargs):
         user = User.objects.get(customer_id=id)
     except ObjectDoesNotExist:
         return HttpResponseBadRequest('User not found.')
-    return JsonResponse(model_to_dict(user))
+    return HttpResponse(serializers.serialize('json', [user]), content_type='application/json')
 
 @csrf_exempt
 def get_products(request):
