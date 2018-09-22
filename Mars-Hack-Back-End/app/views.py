@@ -41,7 +41,7 @@ def get_user_by_id(id):
     #first try to retrieve by pk
     try:
         user = User.objects.get(pk=id)
-    except ObjectDoesNotExist, ValueError:
+    except (ObjectDoesNotExist, ValueError):
         user = User.objects.get(customer_id=id)
     return user
 
