@@ -61,6 +61,7 @@ class OrderCombinedUser(models.Model):
     payment = models.DecimalField(max_digits=4, decimal_places=2)
     
     is_deliverer = models.BooleanField()
+    is_complete = models.BooleanField()
 
 class OrderCombined(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
