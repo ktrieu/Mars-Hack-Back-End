@@ -16,4 +16,5 @@ admin.autodiscover()
 urlpatterns = [
     path(r'', app.views.home),
     path(r'admin', admin.site.urls),
+    path(r'api/load_user/<cust_id>', app.views.load_user_from_api),
 ]
