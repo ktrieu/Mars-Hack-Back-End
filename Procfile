@@ -1,1 +1,1 @@
-web: gunicorn -pythonpath Mars-Hack-Back-End Mars_Hack_Back_End.wsgi
+web: gunicorn --pythonpath Mars-Hack-Back-End Mars_Hack_Back_End.wsgi
