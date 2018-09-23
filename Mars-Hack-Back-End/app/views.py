@@ -207,6 +207,9 @@ def build_merged_order(group):
         receiver.payment = ((receiver.percentage / decimal.Decimal(100)) * total_price) + (deliverer_discount / len(receiver_users))
         receiver.save()
     combined.save()
+    group.deliverer.delete()
+    for receiver in group.receivers:
+        receiver.delete()
 
 @csrf_exempt
 def group_orders(request):
