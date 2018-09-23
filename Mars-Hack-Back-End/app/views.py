@@ -256,7 +256,10 @@ def group_orders(request):
 
 def close_order(order):
     #TODO: actually close order
-    pass
+    for order_user in order.ordercombineduser_set.all():
+        if order_user.is_deliverer:
+            release_funds(order_user.user.customer_id, float(order.product.price), 'MARS-HACK-PAY')
+    order.delete()
 
 @csrf_exempt
 def complete_order(request, **kwargs):
