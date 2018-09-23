@@ -197,13 +197,14 @@ def build_merged_order(group):
         receiver_user.percentage = receiver.percentage
         receiver_user.is_deliverer = False
         receiver_user.is_complete = False
+        receiver_users.append(receiver_user)
     #calculate payment
     total_price = combined.product.price
     deliverer_discount = total_price * decimal.Decimal(0.1)
     deliverer_user.payment = ((deliverer_user.percentage / decimal.Decimal(100)) * total_price) - deliverer_discount
     deliverer_user.save()
     for receiver in receiver_users:
-        receiver.payment = ((receiver.percentage / 100) * total_price) + (deliverer_discount / len(receiver_users))
+        receiver.payment = ((receiver.percentage / decimal.Decimal(100)) * total_price) + (deliverer_discount / len(receiver_users))
         receiver.save()
     combined.save()
 

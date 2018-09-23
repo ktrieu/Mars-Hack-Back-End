@@ -53,6 +53,7 @@ def find_receiver_match_deliverer(dlist_sorted, rlist_sorted):
         receivers = []
         deliverer_x = deliverer.user.latitude
         deliverer_y = deliverer.user.longitude
+        alone = True
 
         for receiver in rlist_sorted:
             if (current_percent + receiver.percentage > 100):
@@ -66,6 +67,7 @@ def find_receiver_match_deliverer(dlist_sorted, rlist_sorted):
                 receiver_y = receiver.user.longitude
                 distance = distance_in_km(receiver_x, receiver_y, deliverer_x, deliverer_y)
                 if (distance <= 10):
+                    alone = False
                     current_percent = current_percent + receiver.percentage
                     receivers.append(receiver)
                     occupied.add(receiver)
@@ -74,9 +76,9 @@ def find_receiver_match_deliverer(dlist_sorted, rlist_sorted):
 
         group.receivers = receivers
         group.percentage = current_percent
-        if len(group.receivers) != 0:
-            occupied.add(deliverer)
-            group_list.append(group)
+        if not alone:
+          occupied.add(deliverer)
+          group_list.append(group)
         receivers = []
 
     return group_list
