@@ -68,6 +68,20 @@ def make_payment(user_id, amount, reason):
     print (receipt)
 
 @csrf_exempt
+def release_funds(user_id, amount, reason):
+    account_id = make_td_request("customers/" + str(user_id) + "/accounts")
+
+    transaction_info = {
+        "amount": amount,
+        "currency": "CAD",
+        "fromAccountID": "b9955b28-afbd-4e3e-8c30-61d0603806c5",
+        "receipt": reason,
+        "toAccountID": account_id['result']['bankAccounts'][0]['id']
+    }
+    receipt = make_td_request("transfers", transaction_info)
+    print (receipt)
+
+@csrf_exempt
 def load_user_from_api(request, **kwargs):
     if request.method != 'POST':
         return HttpResponseBadRequest(content='Invalid request method.')
