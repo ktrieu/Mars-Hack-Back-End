@@ -36,9 +36,12 @@ API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJDQlAiLCJ0ZWFtX2lkIjoi
 
 DATE_FORMAT = '%Y-%m-%d'
 
-def make_td_request(endpoint, params=None):
+def make_td_request(method, endpoint, params=None):
     url = 'https://api.td-davinci.com/api/' + endpoint
-    response = requests.get(url, headers = { 'Authorization': API_KEY }, params=params)
+    if method == 'GET':
+        response = requests.get(url, headers = { 'Authorization': API_KEY }, params=params)
+    elif method == 'POST':
+        response = requests.post(url, headers = { 'Authorization': API_KEY }, json=params)
     return response.json()
 
 #returns a user by TD id or by database pk
@@ -55,30 +58,30 @@ def home(request):
 
 @csrf_exempt
 def make_payment(user_id, amount, reason):
-    account_id = make_td_request("customers/" + str(user_id) + "/accounts")
+    account_id = make_td_request('GET', "customers/" + str(user_id) + "/accounts")
 
     transaction_info = {
         "amount": amount,
         "currency": "CAD",
         "fromAccountID": account_id['result']['bankAccounts'][0]['id'],
-        "receipt": reason,
+        "receipt": json.dumps({ 'reason' : reason }),
         "toAccountID": "b9955b28-afbd-4e3e-8c30-61d0603806c5"
     }
-    receipt = make_td_request("transfers", transaction_info)
+    receipt = make_td_request('POST',"transfers", transaction_info)
     print (receipt)
 
 @csrf_exempt
 def release_funds(user_id, amount, reason):
-    account_id = make_td_request("customers/" + str(user_id) + "/accounts")
+    account_id = make_td_request('GET', "customers/" + str(user_id) + "/accounts")
 
     transaction_info = {
         "amount": amount,
         "currency": "CAD",
         "fromAccountID": "b9955b28-afbd-4e3e-8c30-61d0603806c5",
-        "receipt": reason,
+        "receipt": json.dumps({ 'reason' : reason }),
         "toAccountID": account_id['result']['bankAccounts'][0]['id']
     }
-    receipt = make_td_request("transfers", transaction_info)
+    receipt = make_td_request('POST', "transfers", transaction_info)
     print (receipt)
 
 @csrf_exempt
@@ -87,7 +90,7 @@ def load_user_from_api(request, **kwargs):
         return HttpResponseBadRequest(content='Invalid request method.')
     cust_id = kwargs['cust_id']
     endpoint = f'customers/{cust_id}'
-    response = make_td_request(endpoint)
+    response = make_td_request('GET', endpoint)
     if response.get('errorMsg') == 'Invalid ID':
         return HttpResponseBadRequest(content='Invalid customer ID.')
     user = User()
@@ -231,10 +234,12 @@ def build_merged_order(group):
     total_price = combined.product.price
     deliverer_discount = total_price * decimal.Decimal(0.1)
     deliverer_user.payment = ((deliverer_user.percentage / decimal.Decimal(100)) * total_price) - deliverer_discount
+    make_payment(deliverer_user.user.customer_id, float(deliverer_user.payment), 'MARS-HACK-PAY')
     deliverer_user.save()
     for receiver in receiver_users:
         receiver.payment = ((receiver.percentage / decimal.Decimal(100)) * total_price) + (deliverer_discount / len(receiver_users))
         receiver.save()
+        make_payment(receiver.user.customer_id, float(receiver.payment), 'MARS-HACK-PAY')
     combined.save()
     group.deliverer.delete()
     for receiver in group.receivers:
