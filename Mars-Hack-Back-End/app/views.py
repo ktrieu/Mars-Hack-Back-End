@@ -181,6 +181,7 @@ def cust_orders_merged(request, **kwargs):
     for combined in related_combined:
         #activate shitton of json
         json_combined = dict()
+        json_combined.update(model_to_dict(combined))
         #add top-level combined order info
         json_combined['product'] = model_to_dict(combined.product)
         json_combined['users'] = list()
