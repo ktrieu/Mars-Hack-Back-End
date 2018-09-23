@@ -25,4 +25,5 @@ urlpatterns = [
     path(r'api/get_cust_orders/<cust_id>/', app.views.cust_orders),
     path(r'api/random_order/', app.views.demo_create_random_order),
     path(r'api/group_orders/', app.views.group_orders),
+    path(r'api/get_cust_orders_merged/<cust_id>/', app.views.cust_orders_merged)
 ]

@@ -7,6 +7,7 @@ import datetime
 from datetime import date, timedelta
 import json
 import random
+import decimal
 
 import app.matcher
 
@@ -134,6 +135,26 @@ def get_orders(request):
 def cust_orders(request, **kwargs):
     user = get_user_by_id(kwargs['cust_id'])
     return HttpResponse(serializers.serialize('json', user.orderindividual_set.all()), content_type='application/json')
+
+def cust_orders_merged(request, **kwargs):
+    user = get_user_by_id(kwargs['cust_id'])
+    related_combined = list()
+    for combined_user in user.ordercombineduser_set.all():
+        related_combined.append(combined_user.order)
+    json_list = list()
+    for combined in related_combined:
+        #activate shitton of json
+        json_combined = dict()
+        #add top-level combined order info
+        json_combined['product'] = model_to_dict(combined.product)
+        json_combined['users'] = list()
+        #iterate through combined order through field
+        for order_user in combined.ordercombineduser_set.all():
+            order_user_dict = model_to_dict(order_user)
+            order_user_dict['user'] = model_to_dict(order_user.user)
+            json_combined['users'].append(order_user_dict)
+        json_list.append(json_combined)
+    return JsonResponse(json_list, safe = False)
 
 @csrf_exempt
 def demo_create_random_order(request):
