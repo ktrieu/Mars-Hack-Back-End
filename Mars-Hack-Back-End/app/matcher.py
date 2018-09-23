@@ -9,6 +9,7 @@ class Group:
         self.deliverer = None
         self.receivers = list()
         self.percentage = 0
+        self.date = None
 
 def date_matches (deliverer, receiver):
     deliverer_time_start = deliverer.delivery_begin
@@ -77,8 +78,12 @@ def find_receiver_match_deliverer(dlist_sorted, rlist_sorted):
         group.receivers = receivers
         group.percentage = current_percent
         if not alone:
-          occupied.add(deliverer)
-          group_list.append(group)
+            occupied.add(deliverer)
+            #find the latest start date. This will be a common one for everyone involved
+            group.date = max(group.receivers, key=lambda k:k.delivery_begin).delivery_begin
+            if group.date < group.deliverer.delivery_begin:
+                group.date = group.deliverer.delivery_begin
+            group_list.append(group)
         receivers = []
 
     return group_list

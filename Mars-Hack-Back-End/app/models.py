@@ -72,6 +72,8 @@ admin.site.register(OrderCombinedUser)
 class OrderCombined(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     users = models.ManyToManyField(User, through=OrderCombinedUser)
+    date = models.DateField()
+
 
 admin.site.register(OrderCombined)
 

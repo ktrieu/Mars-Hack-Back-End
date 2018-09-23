@@ -216,6 +216,7 @@ def demo_create_random_order(request):
 def build_merged_order(group):
     combined = OrderCombined()
     combined.product = group.deliverer.product
+    combined.date = group.date
     combined.save()
     #add the deliverer
     deliverer_user = OrderCombinedUser()
