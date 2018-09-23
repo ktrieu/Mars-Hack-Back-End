@@ -18,6 +18,8 @@ class User(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=7)
     longitude = models.DecimalField(max_digits=9, decimal_places=7)
 
+    address = models.CharField(max_length=130)
+
     order_range_km = models.IntegerField(default=10)
 
     def __str__(self):

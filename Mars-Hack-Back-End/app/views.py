@@ -102,8 +102,10 @@ def load_user_from_api(request, **kwargs):
     user.gender = user_json['gender']
     user.first_name = user_json['givenName']
     user.last_name = user_json['surname']
-    user.latitude = user_json['addresses']['principalResidence']['latitude']
-    user.longitude = user_json['addresses']['principalResidence']['longitude']
+    principal_res = user_json['addresses']['principalResidence']
+    user.latitude = principal_res['latitude']
+    user.longitude = principal_res['longitude']
+    user.address = f'{principal_res["streetNumber"]} {principal_res["streetName"]}, {principal_res["municipality"]}'
     try:
         user.save()
     except IntegrityError as e:
