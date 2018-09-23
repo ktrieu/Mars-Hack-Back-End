@@ -226,19 +226,19 @@ def build_merged_order(group):
         receiver_user.percentage = receiver.percentage
         receiver_user.is_deliverer = False
         receiver_user.is_complete = False
+        receiver_users.append(receiver_user)
     #calculate payment
     total_price = combined.product.price
     deliverer_discount = total_price * decimal.Decimal(0.1)
     deliverer_user.payment = ((deliverer_user.percentage / decimal.Decimal(100)) * total_price) - deliverer_discount
     deliverer_user.save()
     for receiver in receiver_users:
-        receiver.payment = ((receiver.percentage / 100) * total_price) + (deliverer_discount / len(receiver_users))
+        receiver.payment = ((receiver.percentage / decimal.Decimal(100)) * total_price) + (deliverer_discount / len(receiver_users))
         receiver.save()
     combined.save()
-    for combined_user in combined.ordercombineduser_set.all():
-        id = combined_user.user.customer_id
-        amount = combined_user.payment
-
+    group.deliverer.delete()
+    for receiver in group.receivers:
+        receiver.delete()
 
 @csrf_exempt
 def group_orders(request):
@@ -246,3 +246,24 @@ def group_orders(request):
     for group in groups:
         build_merged_order(group)
     return HttpResponse(f'{len(groups)} groups merged.')
+
+def close_order(order):
+    #TODO: actually close order
+    pass
+
+@csrf_exempt
+def complete_order(request, **kwargs):
+    order_id = kwargs['order_id']
+    combined_order = OrderCombined.objects.get(pk=order_id)
+    fully_complete = True
+    for order_user in combined_order.ordercombineduser_set.all():
+        if order_user.user.customer_id == kwargs['cust_id']:
+            order_user.complete = True
+        if not order_user.complete:
+            fully_complete = False
+    if fully_complete:
+        close_order()
+        return HttpResponse('Order closed,')
+    return HttpResponse('Order not closed.')
+
+
