@@ -54,9 +54,18 @@ def home(request):
     return HttpResponse(r'<h1>SNAP BACK TO REALITY OH THERE GOES GRAVITY</h1>')
 
 @csrf_exempt
-def charge_order(order):
-    print ('\n\n\n\n\n\n')
-    print (order)
+def make_payment(user_id, amount, reason):
+    account_id = make_td_request("customers/" + str(user_id) + "/accounts")
+
+    transaction_info = {
+        "amount": amount,
+        "currency": "CAD",
+        "fromAccountID": account_id['result']['bankAccounts'][0]['id'],
+        "receipt": reason,
+        "toAccountID": "b9955b28-afbd-4e3e-8c30-61d0603806c5"
+    }
+    receipt = make_td_request("transfers", transaction_info)
+    print (receipt)
 
 @csrf_exempt
 def load_user_from_api(request, **kwargs):
@@ -121,7 +130,6 @@ def create_order(request):
         can_deliver=order_json['can_deliver'])
     order.save()
 
-    charge_order(order)
     return HttpResponse(order.pk)
 
 @csrf_exempt
@@ -213,6 +221,10 @@ def build_merged_order(group):
         receiver.payment = ((receiver.percentage / 100) * total_price) + (deliverer_discount / len(receiver_users))
         receiver.save()
     combined.save()
+    for combined_user in combined.ordercombineduser_set.all():
+        id = combined_user.user.customer_id
+        amount = combined_user.payment
+
 
 @csrf_exempt
 def group_orders(request):
