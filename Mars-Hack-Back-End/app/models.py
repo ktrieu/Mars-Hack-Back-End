@@ -18,7 +18,7 @@ class User(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=7)
     longitude = models.DecimalField(max_digits=9, decimal_places=7)
 
-    order_range_km = models.IntegerField()
+    order_range_km = models.IntegerField(default=10)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
