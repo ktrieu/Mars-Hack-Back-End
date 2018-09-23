@@ -32,7 +32,7 @@ from app.models import OrderCombined
 from app.models import OrderCombinedUser
 
 #yeah, yeah don't put api keys in the code, it's not like this cost money or anything
-API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJDQlAiLCJ0ZWFtX2lkIjoiMTQwZWQwNWItOGI1OS0zNmY4LThjMmEtZmQ1NzVmNGZiMWQzIiwiZXhwIjo5MjIzMzcyMDM2ODU0Nzc1LCJhcHBfaWQiOiI1YmJhNDEzOS0xZWU3LTRhYzItOGU3Ny03MmVkM2Y2YjVhMTgifQ.qUk5SyVTtqvtNFw4kXrM_FWnjP77B2P1UJe_UMbFXoQ'
+API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJDQlAiLCJ0ZWFtX2lkIjoiMTQwZWQwNWItOGI1OS0zNmY4LThjMmEtZmQ1NzVmNGZiMWQzIiwiZXhwIjo5MjIzMzcyMDM2ODU0Nzc1LCJhcHBfaWQiOiI5MTZhNTg0NC1mMDM5LTQ4OTktOTA2OC1mNWYzNzk5NjBkNDgifQ.3FlPR9skHrQvrTbQ7pUTpcgbc2GipwNTxt0CzUXtSb4'
 
 DATE_FORMAT = '%Y-%m-%d'
 
