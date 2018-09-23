@@ -55,6 +55,7 @@ def home(request):
 
 @csrf_exempt
 def charge_order(order):
+    print ('\n\n\n\n\n\n')
     print (order)
 
 @csrf_exempt
