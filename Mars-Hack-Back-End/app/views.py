@@ -265,11 +265,12 @@ def complete_order(request, **kwargs):
     fully_complete = True
     for order_user in combined_order.ordercombineduser_set.all():
         if order_user.user.customer_id == kwargs['cust_id']:
-            order_user.complete = True
-        if not order_user.complete:
+            order_user.is_complete = True
+        if not order_user.is_complete:
             fully_complete = False
+        order_user.save()
     if fully_complete:
-        close_order()
+        close_order(combined_order)
         return HttpResponse('Order closed,')
     return HttpResponse('Order not closed.')
 
