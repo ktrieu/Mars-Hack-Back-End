@@ -8,6 +8,8 @@ from datetime import date, timedelta
 import json
 import random
 
+import app.matcher
+
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
@@ -25,6 +27,8 @@ from datetime import datetime
 from app.models import User
 from app.models import Product
 from app.models import OrderIndividual
+from app.models import OrderCombined
+from app.models import OrderCombinedUser
 
 #yeah, yeah don't put api keys in the code, it's not like this cost money or anything
 API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJDQlAiLCJ0ZWFtX2lkIjoiMTQwZWQwNWItOGI1OS0zNmY4LThjMmEtZmQ1NzVmNGZiMWQzIiwiZXhwIjo5MjIzMzcyMDM2ODU0Nzc1LCJhcHBfaWQiOiI1YmJhNDEzOS0xZWU3LTRhYzItOGU3Ny03MmVkM2Y2YjVhMTgifQ.qUk5SyVTtqvtNFw4kXrM_FWnjP77B2P1UJe_UMbFXoQ'
@@ -151,3 +155,40 @@ def demo_create_random_order(request):
     order.can_deliver = random.choice([True, False])
     order.save()
     return HttpResponse(order.pk)
+
+def build_merged_order(group):
+    combined = OrderCombined()
+    combined.product = group.deliverer.product
+    combined.save()
+    #add the deliverer
+    deliverer_user = OrderCombinedUser()
+    deliverer_user.order = combined
+    deliverer_user.user = group.deliverer.user
+    deliverer_user.is_deliverer = True
+    deliverer_user.is_complete = False
+    deliverer_user.percentage = group.deliverer.percentage
+    #add the receivers
+    receiver_users = list()
+    for receiver in group.receivers:
+        receiver_user = OrderCombinedUser()
+        receiver_user.user = receiver.user
+        receiver_user.order = combined
+        receiver_user.percentage = receiver.percentage
+        receiver_user.is_deliverer = False
+        receiver_user.is_complete = False
+    #calculate payment
+    total_price = combined.product.price
+    deliverer_discount = total_price * decimal.Decimal(0.1)
+    deliverer_user.payment = ((deliverer_user.percentage / decimal.Decimal(100)) * total_price) - deliverer_discount
+    deliverer_user.save()
+    for receiver in receiver_users:
+        receiver.payment = ((receiver.percentage / 100) * total_price) + (deliverer_discount / len(receiver_users))
+        receiver.save()
+    combined.save()
+
+@csrf_exempt
+def group_orders(request):
+    groups = app.matcher.find_groups(OrderIndividual.objects.all())
+    for group in groups:
+        build_merged_order(group)
+    return HttpResponse(f'{len(groups)} groups merged.')
