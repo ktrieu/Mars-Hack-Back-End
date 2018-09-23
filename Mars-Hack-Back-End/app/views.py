@@ -65,7 +65,7 @@ def make_payment(user_id, amount, reason):
         "currency": "CAD",
         "fromAccountID": account_id['result']['bankAccounts'][0]['id'],
         "receipt": json.dumps({ 'reason' : reason }),
-        "toAccountID": "b9955b28-afbd-4e3e-8c30-61d0603806c5"
+        "toAccountID": "1a4335bb-0986-4cc1-981b-3df0891f0369"
     }
     receipt = make_td_request('POST',"transfers", transaction_info)
     print (receipt)
@@ -77,7 +77,7 @@ def release_funds(user_id, amount, reason):
     transaction_info = {
         "amount": amount,
         "currency": "CAD",
-        "fromAccountID": "b9955b28-afbd-4e3e-8c30-61d0603806c5",
+        "fromAccountID": "1a4335bb-0986-4cc1-981b-3df0891f0369",
         "receipt": json.dumps({ 'reason' : reason }),
         "toAccountID": account_id['result']['bankAccounts'][0]['id']
     }
