@@ -54,6 +54,10 @@ def home(request):
     return HttpResponse(r'<h1>SNAP BACK TO REALITY OH THERE GOES GRAVITY</h1>')
 
 @csrf_exempt
+def charge_order(order):
+    print (order)
+
+@csrf_exempt
 def load_user_from_api(request, **kwargs):
     if request.method != 'POST':
         return HttpResponseBadRequest(content='Invalid request method.')
@@ -115,6 +119,8 @@ def create_order(request):
         delivery_end=end_date,
         can_deliver=order_json['can_deliver'])
     order.save()
+
+    charge_order(order)
     return HttpResponse(order.pk)
 
 @csrf_exempt
