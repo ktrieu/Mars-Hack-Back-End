@@ -65,8 +65,12 @@ class OrderCombinedUser(models.Model):
     is_deliverer = models.BooleanField()
     is_complete = models.BooleanField()
 
+admin.site.register(OrderCombinedUser)
+
 class OrderCombined(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     users = models.ManyToManyField(User, through=OrderCombinedUser)
+
+admin.site.register(OrderCombined)
 
 
