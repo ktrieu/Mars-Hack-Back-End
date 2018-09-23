@@ -224,3 +224,24 @@ def group_orders(request):
     for group in groups:
         build_merged_order(group)
     return HttpResponse(f'{len(groups)} groups merged.')
+
+def close_order(order):
+    #TODO: actually close order
+    pass
+
+@csrf_exempt
+def complete_order(request, **kwargs):
+    order_id = kwargs['order_id']
+    combined_order = OrderCombined.objects.get(pk=order_id)
+    fully_complete = True
+    for order_user in combined_order.ordercombineduser_set.all():
+        if order_user.user.customer_id == kwargs['cust_id']:
+            order_user.complete = True
+        if not order_user.complete:
+            fully_complete = False
+    if fully_complete:
+        close_order()
+        return HttpResponse('Order closed,')
+    return HttpResponse('Order not closed.')
+
+
