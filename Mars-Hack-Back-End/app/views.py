@@ -68,7 +68,8 @@ def make_payment(user_id, amount, reason):
         "toAccountID": "1a4335bb-0986-4cc1-981b-3df0891f0369"
     }
     receipt = make_td_request('POST',"transfers", transaction_info)
-    print (receipt)
+    if (receipt['statusCode'] != 200):
+        print(receipt)
 
 @csrf_exempt
 def release_funds(user_id, amount, reason):
@@ -82,7 +83,8 @@ def release_funds(user_id, amount, reason):
         "toAccountID": account_id['result']['bankAccounts'][0]['id']
     }
     receipt = make_td_request('POST', "transfers", transaction_info)
-    print (receipt)
+    if (receipt['statusCode'] != 200):
+        print(receipt)
 
 @csrf_exempt
 def load_user_from_api(request, **kwargs):
